@@ -1,5 +1,8 @@
-package me.nrubin29.chitchat.server.packet.handler;
+package me.nrubin29.chitchat.server.handler;
 
+import me.nrubin29.chitchat.server.ChatManager;
+
+import java.util.Date;
 import java.util.HashMap;
 
 public class PacketMessageHandler extends PacketHandler {
@@ -10,5 +13,7 @@ public class PacketMessageHandler extends PacketHandler {
         String sender = args.get("sender");
         String msg = args.get("msg").replace("%20", " ");
         long when = Long.valueOf(args.get("when"));
+
+        ChatManager.getInstance().getChat(chat).addMessage(sender, chat, msg, new Date(when));
     }
 }

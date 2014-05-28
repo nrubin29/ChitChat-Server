@@ -1,4 +1,4 @@
-package me.nrubin29.chitchat.server.packet.packet;
+package me.nrubin29.chitchat.server.packet;
 
 import java.io.Serializable;
 import java.util.HashMap;

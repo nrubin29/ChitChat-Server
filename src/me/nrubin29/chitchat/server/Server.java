@@ -31,7 +31,7 @@ class Server {
                 public void run() {
                     while (true) {
                         try {
-                            // new ConnectionRequest(server.accept());
+                            new User(server.accept(), key);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

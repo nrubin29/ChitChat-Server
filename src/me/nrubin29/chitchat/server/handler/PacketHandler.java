@@ -1,4 +1,4 @@
-package me.nrubin29.chitchat.server.packet.handler;
+package me.nrubin29.chitchat.server.handler;
 
 import java.util.HashMap;
 

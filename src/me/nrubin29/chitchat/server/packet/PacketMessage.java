@@ -1,4 +1,4 @@
-package me.nrubin29.chitchat.server.packet.packet;
+package me.nrubin29.chitchat.server.packet;
 
 class PacketMessage extends Packet {
 
@@ -6,6 +6,6 @@ class PacketMessage extends Packet {
         args.put("chat", chat);
         args.put("sender", sender);
         args.put("msg", msg.replaceAll(" ", "%20"));
-        args.put("when", String.valueOf(System.nanoTime()));
+        args.put("when", String.valueOf(System.currentTimeMillis()));
     }
 }
