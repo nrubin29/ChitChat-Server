@@ -1,4 +1,4 @@
-package me.nrubin29.chitchat.server;
+package me.nrubin29.chitchat.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,16 +7,16 @@ import java.util.Date;
 public class Chat {
 
     private final String name;
-    private final ArrayList<User> users;
+    private final ArrayList<AbstractUser> users;
     private final ArrayList<Message> messages;
 
     public Chat(String name, String... names) {
         this(name, ChatManager.getInstance().getUsers(names));
     }
 
-    private Chat(String name, User... users) {
+    private Chat(String name, AbstractUser... users) {
         this.name = name;
-        this.users = new ArrayList<User>(Arrays.asList(users));
+        this.users = new ArrayList<AbstractUser>(Arrays.asList(users));
         this.messages = new ArrayList<Message>();
     }
 
@@ -24,8 +24,12 @@ public class Chat {
         return name;
     }
 
-    public User[] getUsers() {
-        return users.toArray(new User[users.size()]);
+    public AbstractUser[] getUsers() {
+        return users.toArray(new AbstractUser[users.size()]);
+    }
+
+    public void addUser(AbstractUser user) {
+        users.add(user);
     }
 
     public Message[] getMessages() {

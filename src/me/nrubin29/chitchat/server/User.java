@@ -1,10 +1,13 @@
 package me.nrubin29.chitchat.server;
 
-import me.nrubin29.chitchat.server.handler.PacketHandlerManager;
-import me.nrubin29.chitchat.server.packet.Packet;
-import me.nrubin29.chitchat.server.packet.PacketLoginRequest;
-import me.nrubin29.chitchat.server.packet.PacketLoginResponse;
+import me.nrubin29.chitchat.common.AbstractUser;
+import me.nrubin29.chitchat.common.ChatManager;
+import me.nrubin29.chitchat.common.packet.handler.PacketHandlerManager;
+import me.nrubin29.chitchat.common.packet.packet.Packet;
+import me.nrubin29.chitchat.common.packet.packet.PacketLoginRequest;
+import me.nrubin29.chitchat.common.packet.packet.PacketLoginResponse;
 
+import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
 import javax.crypto.SecretKey;
 import java.io.EOFException;
@@ -13,13 +16,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class User {
+public class User extends AbstractUser {
 
     private SecretKey key;
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
-
-    private String name;
 
     public User(final Socket socket, final SecretKey key) {
         System.out.println("Got a request.");
@@ -33,18 +34,20 @@ public class User {
 
             System.out.println("Wrote key.");
 
-            Packet firstPacket = (Packet) ((SealedObject) inputStream.readObject()).getObject(key, "AES");
+            Packet firstPacket = decryptPacket(inputStream.readObject());
 
             System.out.println("Got first packet: " + firstPacket);
 
             if (firstPacket instanceof PacketLoginRequest) {
-                if (!firstPacket.args.get("username").equals("Noah")) {
-                    sendPacket(new PacketLoginResponse(PacketLoginResponse.LoginResponse.FAILURE));
+                PacketLoginRequest packetRequest = (PacketLoginRequest) firstPacket;
+                if (MySQL.getInstance().validateLogin(packetRequest.getUser(), packetRequest.getPassword())) {
+                    sendPacket(new PacketLoginResponse(packetRequest.getUser(), PacketLoginResponse.LoginResponse.FAILURE));
                     System.out.println("Request was denied.");
                     return;
                 } else {
-                    sendPacket(new PacketLoginResponse(PacketLoginResponse.LoginResponse.SUCCESS));
-                    name = firstPacket.args.get("username"); // TODO: Eventually, I'll poll a file (or database) for the info.
+                    sendPacket(new PacketLoginResponse(packetRequest.getUser(), PacketLoginResponse.LoginResponse.SUCCESS));
+                    setName(packetRequest.getUser());
+                    ChatManager.getInstance().addUser(this);
                     System.out.println("Request was allowed in.");
                 }
             }
@@ -54,8 +57,8 @@ public class User {
                 public void run() {
                     while (true) {
                         try {
-//                            Packet packet = (Packet) ((SealedObject) inputStream.readObject()).getObject(key);
-                            Packet packet = (Packet) inputStream.readObject();
+                            Packet packet = decryptPacket(inputStream.readObject());
+                            System.out.println("Received packet: " + packet);
                             PacketHandlerManager.getInstance().handle(packet);
                         } catch (EOFException e) {
                             System.out.println("Lost connection to client.");
@@ -76,15 +79,13 @@ public class User {
                 }
             }).start();
         } catch (Exception e) {
+            System.out.println("Removing " + getName() + " because of " + e);
             ChatManager.getInstance().removeUser(this);
         }
     }
 
     public void sendPacket(Packet packet) {
         try {
-//            Cipher c = Cipher.getInstance("AES");
-//            c.init(Cipher.ENCRYPT_MODE, key);
-//            outputStream.writeObject(new SealedObject(packet, c));
             outputStream.writeObject(packet);
             System.out.println("Sent packet: " + packet);
         } catch (Exception e) {
@@ -92,16 +93,17 @@ public class User {
         }
     }
 
-    void handlePacket(Packet packet) {
-        PacketHandlerManager.getInstance().handle(packet);
-    }
+    private Packet decryptPacket(Object o) {
+        try {
+            SealedObject so = (SealedObject) o;
 
-    public String getName() {
-        return name;
-    }
+            Cipher c = Cipher.getInstance("AES");
+            c.init(Cipher.DECRYPT_MODE, key);
 
-    @Override
-    public String toString() {
-        return name;
+            return (Packet) so.getObject(c);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -12,6 +12,8 @@ class Server {
 
     private Server() {
         try {
+            MySQL.getInstance().setup();
+
             do {
                 Random r = new Random();
                 int rPort = r.nextInt(65535);

@@ -1,4 +1,4 @@
-package me.nrubin29.chitchat.server;
+package me.nrubin29.chitchat.common;
 
 import java.util.ArrayList;
 
@@ -14,14 +14,20 @@ public class ChatManager {
     }
 
     private final ArrayList<Chat> chats = new ArrayList<Chat>();
-    private final ArrayList<User> users = new ArrayList<User>();
+    private final ArrayList<AbstractUser> users = new ArrayList<AbstractUser>();
 
-    public void addChat(Chat chat) {
+    public Chat addChat(Chat chat) {
         chats.add(chat);
+        return chat;
     }
 
-    public void removeChat(Chat chat) {
+    public Chat removeChat(String name) {
+        return removeChat(getChat(name));
+    }
+
+    Chat removeChat(Chat chat) {
         chats.remove(chat);
+        return chat;
     }
 
     public Chat getChat(String name) {
@@ -34,16 +40,18 @@ public class ChatManager {
         return null;
     }
 
-    public void addUser(User user) {
+    public AbstractUser addUser(AbstractUser user) {
         users.add(user);
+        return user;
     }
 
-    public void removeUser(User user) {
+    public AbstractUser removeUser(AbstractUser user) {
         users.remove(user);
+        return user;
     }
 
-    public User getUser(String name) {
-        for (User user : users) {
+    public AbstractUser getUser(String name) {
+        for (AbstractUser user : getAllUsers()) {
             if (user.getName().equals(name)) {
                 return user;
             }
@@ -52,8 +60,8 @@ public class ChatManager {
         return null;
     }
 
-    public User[] getUsers(String... names) {
-        User[] users = new User[names.length];
+    public AbstractUser[] getUsers(String... names) {
+        AbstractUser[] users = new AbstractUser[names.length];
 
         int i = 0;
         for (String name : names) {
@@ -61,5 +69,9 @@ public class ChatManager {
         }
 
         return users;
+    }
+
+    AbstractUser[] getAllUsers() {
+        return users.toArray(new AbstractUser[users.size()]);
     }
 }
