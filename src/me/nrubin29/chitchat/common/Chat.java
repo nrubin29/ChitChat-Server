@@ -7,16 +7,16 @@ import java.util.Date;
 public class Chat {
 
     private final String name;
-    private final ArrayList<AbstractUser> users;
+    private final ArrayList<String> users;
     private final ArrayList<Message> messages;
 
-    public Chat(String name, String... names) {
-        this(name, ChatManager.getInstance().getUsers(names));
+    public Chat(ChatData chatData) {
+        this(chatData.getName(), chatData.getUsers());
     }
 
-    private Chat(String name, AbstractUser... users) {
+    public Chat(String name, String... users) {
         this.name = name;
-        this.users = new ArrayList<AbstractUser>(Arrays.asList(users));
+        this.users = new ArrayList<String>(Arrays.asList(users));
         this.messages = new ArrayList<Message>();
     }
 
@@ -24,11 +24,11 @@ public class Chat {
         return name;
     }
 
-    public AbstractUser[] getUsers() {
-        return users.toArray(new AbstractUser[users.size()]);
+    public String[] getUsers() {
+        return users.toArray(new String[users.size()]);
     }
 
-    public void addUser(AbstractUser user) {
+    public void addUser(String user) {
         users.add(user);
     }
 

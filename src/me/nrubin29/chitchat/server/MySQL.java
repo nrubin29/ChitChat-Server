@@ -1,6 +1,10 @@
 package me.nrubin29.chitchat.server;
 
+import me.nrubin29.chitchat.common.Chat;
+import me.nrubin29.chitchat.common.ChatData;
+
 import java.sql.*;
+import java.util.ArrayList;
 
 public class MySQL {
 
@@ -18,83 +22,18 @@ public class MySQL {
     public void setup() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("sensitive-information");
+
+            /*
+            TODO: Don't forget to remove this on push.
+             */
+
+            connection = DriverManager.getConnection("--");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-//    public int[] getHighScores() throws SQLException {
-//    	int[] highScores = new int[10];
-//    	
-//    	if (!setup) {
-//            setup();
-//        }
-//
-//    	PreparedStatement statement = connection.prepareStatement("select realScore from scores14 where version='" + UpdateChecker.VERSION + "' order by realScore desc;");
-//        ResultSet results = statement.executeQuery();
-//        
-//        for (int i = 0; i < 10; i++) {
-//        	if (results.next()) highScores[i] = results.getInt(1);
-//        }
-//        
-//        statement.close();
-//    	
-//    	return highScores;
-//    }
-//
-//    public void pushRound(final Round round) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (!setup) {
-//                    setup();
-//                }
-//
-//                try {
-//                    PreparedStatement statement = connection.prepareStatement(
-//                            "insert into scores14 (realScore, boostedScore, startScore, secondsPlayed, startTime, version)\n" + "values(" +
-//                                    "'" + round.getRealScore() + "','" +
-//                                    round.getBoostedScore() + "','" +
-//                                    round.getStartScore() + "','" +
-//                                    round.getSecondsPlayed() + "','" +
-//                                    round.getStartTime().toString() + "','" +
-//                                    UpdateChecker.VERSION + "')"
-//                    );
-//                    statement.executeUpdate();
-//                    statement.close();
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//    }
-//
-//    public void pushComment(final String comment) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (!setup) {
-//                    setup();
-//                }
-//
-//                try {
-//                    PreparedStatement statement = connection.prepareStatement(
-//                            "insert into feedback (comment, timeSubmitted, version)\nvalues (" +
-//                                    "'" + comment + "','" +
-//                                    new Date() + "','" +
-//                                    UpdateChecker.VERSION + "')"
-//                    );
-//                    statement.executeUpdate();
-//                    statement.close();
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//    }
-
-    private boolean success;
+    private boolean loginSuccess;
 
     public boolean validateLogin(final String username, final String password) {
         new Thread(new Runnable() {
@@ -109,7 +48,7 @@ public class MySQL {
                     String remotePassword = results.getString("password");
 
                     if (remotePassword.equals(password)) {
-                        success = true;
+                        loginSuccess = true;
                     }
 
                     statement.close();
@@ -119,8 +58,96 @@ public class MySQL {
             }
         }).start();
 
-        boolean localSuccess = success;
-        success = false;
+        boolean localSuccess = loginSuccess;
+        loginSuccess = false;
         return localSuccess;
+    }
+
+    private boolean registerSuccess;
+
+    public boolean validateRegister(final String username, final String password) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement statement = connection.prepareStatement(
+                            "select username from users where username='" + username + "';"
+                    );
+
+                    ResultSet results = statement.executeQuery();
+
+                    if (results.first()) {
+                        registerSuccess = false;
+                        System.out.println("Found a result.");
+                    } else {
+                        PreparedStatement statement2 = connection.prepareStatement(
+                                "insert into users (username, password) values ('" + username + "', '" + password + "');"
+                        );
+
+                        statement2.executeUpdate();
+                        statement2.close();
+
+                        registerSuccess = true;
+                    }
+
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        boolean localSuccess = registerSuccess;
+        registerSuccess = false;
+        return localSuccess;
+    }
+
+    public ChatData[] getChats(final String user) {
+        ArrayList<ChatData> chats = new ArrayList<ChatData>();
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "select users, title from chats where users like '%" + user + "%';"
+            );
+
+            ResultSet results = statement.executeQuery();
+
+            while (results.next()) {
+                String title = results.getString("title");
+                String users = results.getString("users");
+                System.out.println("Found chat " + title + " for users " + users);
+                chats.add(new ChatData(title, users.split(",")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        ChatData[] chatsArray = chats.toArray(new ChatData[chats.size()]);
+        chats.clear();
+        return chatsArray;
+    }
+
+    public Chat[] getAllChats() {
+        ArrayList<Chat> allChats = new ArrayList<Chat>();
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "select users, title from chats;"
+            );
+
+            ResultSet results = statement.executeQuery();
+
+            while (results.next()) {
+                String title = results.getString("title");
+                String users = results.getString("users");
+                allChats.add(new Chat(title, users.split(",")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        Chat[] chatsArray = allChats.toArray(new Chat[allChats.size()]);
+        allChats.clear();
+        return chatsArray;
     }
 }

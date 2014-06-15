@@ -3,9 +3,8 @@ package me.nrubin29.chitchat.server;
 import me.nrubin29.chitchat.common.AbstractUser;
 import me.nrubin29.chitchat.common.ChatManager;
 import me.nrubin29.chitchat.common.packet.handler.PacketHandlerManager;
-import me.nrubin29.chitchat.common.packet.packet.Packet;
-import me.nrubin29.chitchat.common.packet.packet.PacketLoginRequest;
-import me.nrubin29.chitchat.common.packet.packet.PacketLoginResponse;
+import me.nrubin29.chitchat.common.packet.packet.*;
+import me.nrubin29.chitchat.common.packet.packet.PacketRegisterResponse.RegisterResponse;
 
 import javax.crypto.Cipher;
 import javax.crypto.SealedObject;
@@ -50,7 +49,21 @@ public class User extends AbstractUser {
                     ChatManager.getInstance().addUser(this);
                     System.out.println("Request was allowed in.");
                 }
+            } else if (firstPacket instanceof PacketRegisterRequest) {
+                PacketRegisterRequest packetRequest = (PacketRegisterRequest) firstPacket;
+                if (!MySQL.getInstance().validateRegister(packetRequest.getUser(), packetRequest.getPassword())) {
+                    sendPacket(new PacketRegisterResponse(packetRequest.getUser(), RegisterResponse.FAILURE));
+                    System.out.println("Request was denied.");
+                    return;
+                } else {
+                    sendPacket(new PacketRegisterResponse(packetRequest.getUser(), RegisterResponse.SUCCESS));
+                    setName(packetRequest.getUser());
+                    ChatManager.getInstance().addUser(this);
+                    System.out.println("Request was allowed in.");
+                }
             }
+
+            sendPacket(new PacketChatList(MySQL.getInstance().getChats(getName())));
 
             new Thread(new Runnable() {
                 @Override

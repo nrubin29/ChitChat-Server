@@ -1,5 +1,8 @@
 package me.nrubin29.chitchat.server;
 
+import me.nrubin29.chitchat.common.Chat;
+import me.nrubin29.chitchat.common.ChatManager;
+
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.net.ServerSocket;
@@ -13,6 +16,10 @@ class Server {
     private Server() {
         try {
             MySQL.getInstance().setup();
+
+            for (Chat chat : MySQL.getInstance().getAllChats()) {
+                ChatManager.getInstance().addChat(chat);
+            }
 
             do {
                 Random r = new Random();

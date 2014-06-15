@@ -20,6 +20,7 @@ public class PacketHandlerManager {
         handlers.add(new PacketLoginRequestHandler());
         handlers.add(new PacketLoginResponseHandler());
         handlers.add(new PacketMessageHandler());
+        handlers.add(new PacketRegisterResponseHandler());
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
