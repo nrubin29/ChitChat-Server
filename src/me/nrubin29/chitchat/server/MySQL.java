@@ -27,7 +27,7 @@ public class MySQL {
             TODO: Don't forget to remove this on push.
              */
 
-            connection = DriverManager.getConnection("jdbc:mysql://162.243.229.150:3306/chitchat?user=user&password=Banana");
+            connection = DriverManager.getConnection(MySQLInfo.CONNECTION);
         } catch (Exception e) {
             e.printStackTrace();
         }
