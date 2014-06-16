@@ -27,79 +27,93 @@ public class MySQL {
             TODO: Don't forget to remove this on push.
              */
 
-            connection = DriverManager.getConnection("--");
+            connection = DriverManager.getConnection("jdbc:mysql://162.243.229.150:3306/chitchat?user=user&password=Banana");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private boolean loginSuccess;
-
     public boolean validateLogin(final String username, final String password) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    PreparedStatement statement = connection.prepareStatement(
-                            "select password from users where username='" + username + "';"
-                    );
-                    ResultSet results = statement.executeQuery();
-                    results.next();
-                    String remotePassword = results.getString("password");
+        boolean loginSuccess = false;
 
-                    if (remotePassword.equals(password)) {
-                        loginSuccess = true;
-                    }
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "select password from users where username='" + username + "';"
+            );
+            ResultSet results = statement.executeQuery();
+            results.next();
+            String remotePassword = results.getString("password");
 
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            if (remotePassword.equals(password)) {
+                loginSuccess = true;
             }
-        }).start();
 
-        boolean localSuccess = loginSuccess;
-        loginSuccess = false;
-        return localSuccess;
+            statement.close();
+        } catch (SQLException e) {
+            loginSuccess = false;
+        }
+
+        return loginSuccess;
     }
 
-    private boolean registerSuccess;
-
     public boolean validateRegister(final String username, final String password) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    PreparedStatement statement = connection.prepareStatement(
-                            "select username from users where username='" + username + "';"
-                    );
+        boolean registerSuccess = false;
 
-                    ResultSet results = statement.executeQuery();
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "select username from users where username='" + username + "';"
+            );
 
-                    if (results.first()) {
-                        registerSuccess = false;
-                        System.out.println("Found a result.");
-                    } else {
-                        PreparedStatement statement2 = connection.prepareStatement(
-                                "insert into users (username, password) values ('" + username + "', '" + password + "');"
-                        );
+            ResultSet results = statement.executeQuery();
 
-                        statement2.executeUpdate();
-                        statement2.close();
+            if (results.first()) {
+                registerSuccess = false;
+                System.out.println("Found a result.");
+            } else {
+                PreparedStatement statement2 = connection.prepareStatement(
+                        "insert into users (username, password) values ('" + username + "', '" + password + "');"
+                );
 
-                        registerSuccess = true;
-                    }
+                statement2.executeUpdate();
+                statement2.close();
 
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                registerSuccess = true;
             }
-        }).start();
 
-        boolean localSuccess = registerSuccess;
-        registerSuccess = false;
-        return localSuccess;
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return registerSuccess;
+    }
+
+    public void saveChat(final Chat chat) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "select name from chats where name='" + chat.getName() + "';"
+            );
+
+            ResultSet results = statement.executeQuery();
+
+            if (results.first()) {
+                PreparedStatement statement1 = connection.prepareStatement(
+                        "update chats set users='" + chat.getUsersWithCommas() + "' where name='" + chat.getName() + "';"
+                );
+
+                statement1.executeUpdate();
+                statement1.close();
+            } else {
+                PreparedStatement statement1 = connection.prepareStatement(
+                        "insert into chats (name, users) values ('" + chat.getName() + "', '" + chat.getUsersWithCommas() + "');"
+                );
+
+                statement1.executeUpdate();
+                statement1.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public ChatData[] getChats(final String user) {
@@ -107,16 +121,16 @@ public class MySQL {
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "select users, title from chats where users like '%" + user + "%';"
+                    "select name, users from chats where users like '%" + user + "%';"
             );
 
             ResultSet results = statement.executeQuery();
 
             while (results.next()) {
-                String title = results.getString("title");
+                String name = results.getString("name");
                 String users = results.getString("users");
-                System.out.println("Found chat " + title + " for users " + users);
-                chats.add(new ChatData(title, users.split(",")));
+                System.out.println("Found chat " + name + " for users " + users);
+                chats.add(new ChatData(name, users.split(",")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -132,15 +146,15 @@ public class MySQL {
 
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "select users, title from chats;"
+                    "select name, users from chats;"
             );
 
             ResultSet results = statement.executeQuery();
 
             while (results.next()) {
-                String title = results.getString("title");
+                String name = results.getString("name");
                 String users = results.getString("users");
-                allChats.add(new Chat(title, users.split(",")));
+                allChats.add(new Chat(name, users.split(",")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

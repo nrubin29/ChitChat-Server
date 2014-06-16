@@ -1,5 +1,7 @@
 package me.nrubin29.chitchat.common;
 
+import me.nrubin29.chitchat.server.MySQL;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,8 +30,19 @@ public class Chat {
         return users.toArray(new String[users.size()]);
     }
 
+    public String getUsersWithCommas() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (String user : users) {
+            stringBuilder.append(user).append(",");
+        }
+
+        return stringBuilder.toString();
+    }
+
     public void addUser(String user) {
         users.add(user);
+        MySQL.getInstance().saveChat(this);
     }
 
     public Message[] getMessages() {

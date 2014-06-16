@@ -39,7 +39,7 @@ public class User extends AbstractUser {
 
             if (firstPacket instanceof PacketLoginRequest) {
                 PacketLoginRequest packetRequest = (PacketLoginRequest) firstPacket;
-                if (MySQL.getInstance().validateLogin(packetRequest.getUser(), packetRequest.getPassword())) {
+                if (!MySQL.getInstance().validateLogin(packetRequest.getUser(), packetRequest.getPassword())) {
                     sendPacket(new PacketLoginResponse(packetRequest.getUser(), PacketLoginResponse.LoginResponse.FAILURE));
                     System.out.println("Request was denied.");
                     return;
@@ -64,6 +64,14 @@ public class User extends AbstractUser {
             }
 
             sendPacket(new PacketChatList(MySQL.getInstance().getChats(getName())));
+
+            for (AbstractUser user : ChatManager.getInstance().getAllUsers()) {
+                if (!user.equals(this)) {
+                    ((User) user).sendPacket(new PacketUserJoin(this));
+                }
+            }
+
+            sendPacket(new PacketUserList());
 
             new Thread(new Runnable() {
                 @Override

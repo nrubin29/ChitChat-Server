@@ -71,7 +71,7 @@ public class ChatManager {
         return users;
     }
 
-    AbstractUser[] getAllUsers() {
+    public AbstractUser[] getAllUsers() {
         return users.toArray(new AbstractUser[users.size()]);
     }
 }

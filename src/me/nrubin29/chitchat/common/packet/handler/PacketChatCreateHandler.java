@@ -3,6 +3,7 @@ package me.nrubin29.chitchat.common.packet.handler;
 import me.nrubin29.chitchat.common.Chat;
 import me.nrubin29.chitchat.common.ChatManager;
 import me.nrubin29.chitchat.common.packet.packet.PacketChatCreate;
+import me.nrubin29.chitchat.server.MySQL;
 
 public class PacketChatCreateHandler extends PacketHandler<PacketChatCreate> {
 
@@ -12,6 +13,8 @@ public class PacketChatCreateHandler extends PacketHandler<PacketChatCreate> {
 
     @Override
     public void handle(PacketChatCreate packet) {
-        ChatManager.getInstance().addChat(new Chat(packet.getChat(), packet.getUsers().split(",")));
+        Chat chat = new Chat(packet.getChat(), packet.getUsers().split(","));
+        ChatManager.getInstance().addChat(chat);
+        MySQL.getInstance().saveChat(chat);
     }
 }
