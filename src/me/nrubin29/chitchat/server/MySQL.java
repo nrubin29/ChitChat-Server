@@ -22,11 +22,6 @@ public class MySQL {
     public void setup() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-
-            /*
-            TODO: Don't forget to remove this on push.
-             */
-
             connection = DriverManager.getConnection(MySQLInfo.CONNECTION);
         } catch (Exception e) {
             e.printStackTrace();
