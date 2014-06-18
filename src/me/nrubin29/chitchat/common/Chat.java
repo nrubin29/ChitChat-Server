@@ -45,6 +45,11 @@ public class Chat {
         MySQL.getInstance().saveChat(this);
     }
 
+    public void removeUser(String user) {
+        users.remove(user);
+        MySQL.getInstance().saveChat(this);
+    }
+
     public Message[] getMessages() {
         return messages.toArray(new Message[messages.size()]);
     }
