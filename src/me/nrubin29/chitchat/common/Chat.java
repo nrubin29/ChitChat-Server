@@ -50,6 +50,10 @@ public class Chat {
         MySQL.getInstance().saveChat(this);
     }
 
+    public boolean hasUser(String user) {
+        return users.contains(user);
+    }
+
     public Message[] getMessages() {
         return messages.toArray(new Message[messages.size()]);
     }

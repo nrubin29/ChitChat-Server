@@ -6,14 +6,21 @@ public class AbstractUser implements Serializable {
 
     private static final long serialVersionUID = 4086519985573649809L;
 
-    private String name;
+    public enum UserStatus {
+        ONLINE,
+        AWAY
+    }
 
-    protected AbstractUser() {
+    private String name;
+    private UserStatus userStatus;
+
+    public AbstractUser() {
         this("");
     }
 
-    private AbstractUser(String name) {
+    public AbstractUser(String name) {
         this.name = name;
+        this.userStatus = UserStatus.ONLINE;
     }
 
     public String getName() {
@@ -23,8 +30,16 @@ public class AbstractUser implements Serializable {
     /*
     This should be called once by the server.
      */
-    protected void setName(String name) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public UserStatus getUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
     }
 
     @Override

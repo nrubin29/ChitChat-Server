@@ -42,6 +42,18 @@ public class ChatManager {
         return null;
     }
 
+    public Chat[] getChats(User user) {
+        ArrayList<Chat> userChats = new ArrayList<Chat>();
+
+        for (Chat chat : chats) {
+            if (chat.hasUser(user.getName())) {
+                userChats.add(chat);
+            }
+        }
+
+        return userChats.toArray(new Chat[userChats.size()]);
+    }
+
     public User addUser(User user) {
         users.add(user);
         return user;
