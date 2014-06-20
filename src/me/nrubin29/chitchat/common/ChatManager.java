@@ -1,5 +1,7 @@
 package me.nrubin29.chitchat.common;
 
+import me.nrubin29.chitchat.server.User;
+
 import java.util.ArrayList;
 
 public class ChatManager {
@@ -14,7 +16,7 @@ public class ChatManager {
     }
 
     private final ArrayList<Chat> chats = new ArrayList<Chat>();
-    private final ArrayList<AbstractUser> users = new ArrayList<AbstractUser>();
+    private final ArrayList<User> users = new ArrayList<User>();
 
     public Chat addChat(Chat chat) {
         chats.add(chat);
@@ -40,18 +42,18 @@ public class ChatManager {
         return null;
     }
 
-    public AbstractUser addUser(AbstractUser user) {
+    public User addUser(User user) {
         users.add(user);
         return user;
     }
 
-    public AbstractUser removeUser(AbstractUser user) {
+    public User removeUser(User user) {
         users.remove(user);
         return user;
     }
 
-    public AbstractUser getUser(String name) {
-        for (AbstractUser user : getAllUsers()) {
+    public User getUser(String name) {
+        for (User user : getAllUsers()) {
             if (user.getName().equals(name)) {
                 return user;
             }
@@ -60,8 +62,8 @@ public class ChatManager {
         return null;
     }
 
-    public AbstractUser[] getUsers(String... names) {
-        AbstractUser[] users = new AbstractUser[names.length];
+    public User[] getUsers(String... names) {
+        User[] users = new User[names.length];
 
         int i = 0;
         for (String name : names) {
@@ -71,7 +73,7 @@ public class ChatManager {
         return users;
     }
 
-    public AbstractUser[] getAllUsers() {
-        return users.toArray(new AbstractUser[users.size()]);
+    public User[] getAllUsers() {
+        return users.toArray(new User[users.size()]);
     }
 }

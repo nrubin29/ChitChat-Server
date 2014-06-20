@@ -63,8 +63,6 @@ public class User extends AbstractUser {
                 }
             }
 
-            sendPacket(new PacketChatList(MySQL.getInstance().getChats(getName())));
-
             for (AbstractUser user : ChatManager.getInstance().getAllUsers()) {
                 if (!user.equals(this)) {
                     ((User) user).sendPacket(new PacketUserJoin(this));
@@ -72,6 +70,8 @@ public class User extends AbstractUser {
             }
 
             sendPacket(new PacketUserList());
+
+            sendPacket(new PacketChatList(MySQL.getInstance().getChats(getName())));
 
             new Thread(new Runnable() {
                 @Override
@@ -92,6 +92,12 @@ public class User extends AbstractUser {
 
                             ChatManager.getInstance().removeUser(User.this);
 
+                            for (User u : ChatManager.getInstance().getAllUsers()) {
+                                if (!u.equals(User.this)) {
+                                    u.sendPacket(new PacketUserLeave(User.this));
+                                }
+                            }
+
                             break;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -102,6 +108,12 @@ public class User extends AbstractUser {
         } catch (Exception e) {
             System.out.println("Removing " + getName() + " because of " + e);
             ChatManager.getInstance().removeUser(this);
+
+            for (User u : ChatManager.getInstance().getAllUsers()) {
+                if (!u.equals(User.this)) {
+                    u.sendPacket(new PacketUserLeave(User.this));
+                }
+            }
         }
     }
 

@@ -10,7 +10,7 @@ public class PacketChatCreate extends Packet {
     private final String users;
 
     public PacketChatCreate(Chat chat) {
-        this(chat.getName(), arrayToString(chat.getUsers()));
+        this(chat.getName(), chat.getUsers());
     }
 
     public PacketChatCreate(String chat, String... users) {
@@ -24,16 +24,6 @@ public class PacketChatCreate extends Packet {
 
     public String getUsers() {
         return users;
-    }
-
-    private static <T> String[] arrayToString(T[] array) {
-        String[] strs = new String[array.length];
-
-        for (int i = 0; i < strs.length; i++) {
-            strs[i] = array[i].toString();
-        }
-
-        return strs;
     }
 
     private String join(String[] strs) {

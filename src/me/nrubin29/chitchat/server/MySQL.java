@@ -39,7 +39,7 @@ public class MySQL {
             results.next();
             String remotePassword = results.getString("password");
 
-            if (remotePassword.equals(password)) {
+            if (remotePassword.equals(Server.stringToSHA256(password))) {
                 loginSuccess = true;
             }
 
@@ -66,7 +66,7 @@ public class MySQL {
                 System.out.println("Found a result.");
             } else {
                 PreparedStatement statement2 = connection.prepareStatement(
-                        "insert into users (username, password) values ('" + username + "', '" + password + "');"
+                        "insert into users (username, password) values ('" + username + "', '" + Server.stringToSHA256(password) + "');"
                 );
 
                 statement2.executeUpdate();
@@ -124,16 +124,13 @@ public class MySQL {
             while (results.next()) {
                 String name = results.getString("name");
                 String users = results.getString("users");
-                System.out.println("Found chat " + name + " for users " + users);
                 chats.add(new ChatData(name, users.split(",")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        ChatData[] chatsArray = chats.toArray(new ChatData[chats.size()]);
-        chats.clear();
-        return chatsArray;
+        return chats.toArray(new ChatData[chats.size()]);
     }
 
     public Chat[] getAllChats() {
@@ -155,8 +152,6 @@ public class MySQL {
             e.printStackTrace();
         }
 
-        Chat[] chatsArray = allChats.toArray(new Chat[allChats.size()]);
-        allChats.clear();
-        return chatsArray;
+        return allChats.toArray(new Chat[allChats.size()]);
     }
 }
