@@ -63,7 +63,6 @@ public class MySQL {
 
             if (results.first()) {
                 registerSuccess = false;
-                System.out.println("Found a result.");
             } else {
                 PreparedStatement statement2 = connection.prepareStatement(
                         "insert into users (username, password) values ('" + username + "', '" + Server.stringToSHA256(password) + "');"
@@ -81,6 +80,38 @@ public class MySQL {
         }
 
         return registerSuccess;
+    }
+
+    public boolean changePassword(String username, String oldPassword, String newPassword) {
+        boolean changeSuccess;
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "select password from users where username='" + username + "';"
+            );
+            ResultSet results = statement.executeQuery();
+            results.next();
+            String remotePassword = results.getString("password");
+
+            if (remotePassword.equals(Server.stringToSHA256(oldPassword))) {
+                PreparedStatement statement1 = connection.prepareStatement(
+                        "update users set password='" + Server.stringToSHA256(newPassword) + "' where username='" + username + "';"
+                );
+
+                statement1.executeUpdate();
+                statement1.close();
+
+                changeSuccess = true;
+            } else {
+                changeSuccess = false;
+            }
+
+            statement.close();
+        } catch (SQLException e) {
+            changeSuccess = false;
+        }
+
+        return changeSuccess;
     }
 
     public void saveChat(final Chat chat) {
