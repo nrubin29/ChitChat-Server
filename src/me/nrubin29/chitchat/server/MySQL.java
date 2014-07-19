@@ -65,7 +65,7 @@ public class MySQL {
                 registerSuccess = false;
             } else {
                 PreparedStatement statement2 = connection.prepareStatement(
-                        "insert into users (username, password) values ('" + username + "', '" + Server.stringToSHA256(password) + "');"
+                        "insert into users (username, password, displayname) values ('" + username + "', '" + Server.stringToSHA256(password) + "', '" + username + "');"
                 );
 
                 statement2.executeUpdate();
@@ -112,6 +112,37 @@ public class MySQL {
         }
 
         return changeSuccess;
+    }
+
+    public void changeDisplayName(String username, String newDisplayName) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "update users set displayname='" + newDisplayName + "' where username='" + username + "';"
+            );
+
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getDisplayName(String username) {
+        String displayName = null;
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "select displayname from users where username='" + username + "';"
+            );
+            ResultSet results = statement.executeQuery();
+            results.next();
+            displayName = results.getString("displayname");
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return displayName;
     }
 
     public void saveChat(final Chat chat) {

@@ -40,24 +40,26 @@ public class User extends AbstractUser {
             if (firstPacket instanceof PacketLoginRequest) {
                 PacketLoginRequest packetRequest = (PacketLoginRequest) firstPacket;
                 if (!MySQL.getInstance().validateLogin(packetRequest.getUser(), packetRequest.getPassword())) {
-                    sendPacket(new PacketLoginResponse(packetRequest.getUser(), PacketLoginResponse.LoginResponse.FAILURE));
+                    sendPacket(new PacketLoginResponse(null, PacketLoginResponse.LoginResponse.FAILURE));
                     System.out.println("Request was denied.");
                     return;
                 } else {
-                    sendPacket(new PacketLoginResponse(packetRequest.getUser(), PacketLoginResponse.LoginResponse.SUCCESS));
                     setName(packetRequest.getUser());
+                    setDisplayName(MySQL.getInstance().getDisplayName(packetRequest.getUser()));
+                    sendPacket(new PacketLoginResponse(getName() + ";" + getDisplayName(), PacketLoginResponse.LoginResponse.SUCCESS));
                     ChatManager.getInstance().addUser(this);
                     System.out.println("Request was allowed in.");
                 }
             } else if (firstPacket instanceof PacketRegisterRequest) {
                 PacketRegisterRequest packetRequest = (PacketRegisterRequest) firstPacket;
                 if (!MySQL.getInstance().validateRegister(packetRequest.getUser(), packetRequest.getPassword())) {
-                    sendPacket(new PacketRegisterResponse(packetRequest.getUser(), RegisterResponse.FAILURE));
+                    sendPacket(new PacketRegisterResponse(null, RegisterResponse.FAILURE));
                     System.out.println("Request was denied.");
                     return;
                 } else {
-                    sendPacket(new PacketRegisterResponse(packetRequest.getUser(), RegisterResponse.SUCCESS));
                     setName(packetRequest.getUser());
+                    setDisplayName(MySQL.getInstance().getDisplayName(packetRequest.getUser()));
+                    sendPacket(new PacketRegisterResponse(getName() + ";" + getDisplayName(), RegisterResponse.SUCCESS));
                     ChatManager.getInstance().addUser(this);
                     System.out.println("Request was allowed in.");
                 }

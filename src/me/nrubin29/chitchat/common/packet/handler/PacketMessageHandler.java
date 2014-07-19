@@ -3,7 +3,6 @@ package me.nrubin29.chitchat.common.packet.handler;
 import me.nrubin29.chitchat.common.Chat;
 import me.nrubin29.chitchat.common.ChatManager;
 import me.nrubin29.chitchat.common.packet.packet.PacketMessage;
-import me.nrubin29.chitchat.server.User;
 
 public class PacketMessageHandler extends PacketHandler<PacketMessage> {
 
@@ -18,7 +17,7 @@ public class PacketMessageHandler extends PacketHandler<PacketMessage> {
 
         for (String u : chat.getUsers()) {
             if (ChatManager.getInstance().getUser(u) != null) {
-                ((User) ChatManager.getInstance().getUser(u)).sendPacket(packet);
+                ChatManager.getInstance().getUser(u).sendPacket(packet);
             }
         }
     }

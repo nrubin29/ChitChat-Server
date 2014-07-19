@@ -9,7 +9,7 @@ public class PacketUserJoin extends Packet {
     private String user;
 
     public PacketUserJoin(AbstractUser user) {
-        this.user = user.getName();
+        this.user = user.getName() + ";" + user.getDisplayName();
     }
 
     public String getUser() {

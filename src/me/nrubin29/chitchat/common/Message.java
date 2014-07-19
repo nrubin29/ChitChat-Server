@@ -1,26 +1,28 @@
 package me.nrubin29.chitchat.common;
 
-import java.util.Date;
+import me.nrubin29.chitchat.server.User;
+
+import java.util.Calendar;
 
 public class Message {
 
-    private final AbstractUser sender;
+    private final User sender;
     private final Chat chat;
     private final String message;
-    private final Date when;
+    private final Calendar when;
 
-    public Message(String sender, String chat, String message, Date when) {
+    public Message(String sender, String chat, String message, Calendar when) {
         this(ChatManager.getInstance().getUser(sender), ChatManager.getInstance().getChat(chat), message, when);
     }
 
-    private Message(AbstractUser sender, Chat chat, String message, Date when) {
+    private Message(User sender, Chat chat, String message, Calendar when) {
         this.sender = sender;
         this.chat = chat;
         this.message = message;
         this.when = when;
     }
 
-    public AbstractUser getSender() {
+    public User getSender() {
         return sender;
     }
 
@@ -32,7 +34,7 @@ public class Message {
         return message;
     }
 
-    public Date getWhen() {
+    public Calendar getWhen() {
         return when;
     }
 }
