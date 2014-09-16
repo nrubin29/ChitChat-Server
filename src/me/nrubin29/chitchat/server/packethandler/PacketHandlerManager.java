@@ -1,6 +1,6 @@
-package me.nrubin29.chitchat.common.packet.handler;
+package me.nrubin29.chitchat.server.packethandler;
 
-import me.nrubin29.chitchat.common.packet.packet.Packet;
+import me.nrubin29.chitchat.common.packet.Packet;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package me.nrubin29.chitchat.common.packet.packet;
+package me.nrubin29.chitchat.common.packet;
 
 import me.nrubin29.chitchat.common.ChatData;
 

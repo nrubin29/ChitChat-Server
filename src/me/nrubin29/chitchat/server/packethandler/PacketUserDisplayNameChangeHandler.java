@@ -1,7 +1,7 @@
-package me.nrubin29.chitchat.common.packet.handler;
+package me.nrubin29.chitchat.server.packethandler;
 
 import me.nrubin29.chitchat.common.ChatManager;
-import me.nrubin29.chitchat.common.packet.packet.PacketUserDisplayNameChange;
+import me.nrubin29.chitchat.common.packet.PacketUserDisplayNameChange;
 import me.nrubin29.chitchat.server.MySQL;
 import me.nrubin29.chitchat.server.User;
 

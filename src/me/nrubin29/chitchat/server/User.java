@@ -2,9 +2,9 @@ package me.nrubin29.chitchat.server;
 
 import me.nrubin29.chitchat.common.AbstractUser;
 import me.nrubin29.chitchat.common.ChatManager;
-import me.nrubin29.chitchat.common.packet.handler.PacketHandlerManager;
-import me.nrubin29.chitchat.common.packet.packet.*;
-import me.nrubin29.chitchat.common.packet.packet.PacketRegisterResponse.RegisterResponse;
+import me.nrubin29.chitchat.common.packet.*;
+import me.nrubin29.chitchat.common.packet.PacketRegisterResponse.RegisterResponse;
+import me.nrubin29.chitchat.server.packethandler.PacketHandlerManager;
 
 import javax.crypto.Cipher;
 import javax.crypto.SealedObject;

@@ -1,9 +1,9 @@
-package me.nrubin29.chitchat.common.packet.handler;
+package me.nrubin29.chitchat.server.packethandler;
 
 import me.nrubin29.chitchat.common.Chat;
 import me.nrubin29.chitchat.common.ChatManager;
-import me.nrubin29.chitchat.common.packet.packet.PacketChatAddUser;
-import me.nrubin29.chitchat.common.packet.packet.PacketChatCreate;
+import me.nrubin29.chitchat.common.packet.PacketChatAddUser;
+import me.nrubin29.chitchat.common.packet.PacketChatCreate;
 
 public class PacketChatAddUserHandler extends PacketHandler<PacketChatAddUser> {
 

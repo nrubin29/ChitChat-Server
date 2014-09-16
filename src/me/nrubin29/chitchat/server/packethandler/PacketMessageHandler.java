@@ -1,8 +1,8 @@
-package me.nrubin29.chitchat.common.packet.handler;
+package me.nrubin29.chitchat.server.packethandler;
 
 import me.nrubin29.chitchat.common.Chat;
 import me.nrubin29.chitchat.common.ChatManager;
-import me.nrubin29.chitchat.common.packet.packet.PacketMessage;
+import me.nrubin29.chitchat.common.packet.PacketMessage;
 
 public class PacketMessageHandler extends PacketHandler<PacketMessage> {
 

@@ -1,8 +1,8 @@
-package me.nrubin29.chitchat.common.packet.handler;
+package me.nrubin29.chitchat.server.packethandler;
 
 import me.nrubin29.chitchat.common.ChatManager;
-import me.nrubin29.chitchat.common.packet.packet.PacketUserPasswordChange;
-import me.nrubin29.chitchat.common.packet.packet.PacketUserPasswordChangeResponse;
+import me.nrubin29.chitchat.common.packet.PacketUserPasswordChange;
+import me.nrubin29.chitchat.common.packet.PacketUserPasswordChangeResponse;
 import me.nrubin29.chitchat.server.MySQL;
 
 public class PacketUserPasswordChangeHandler extends PacketHandler<PacketUserPasswordChange> {

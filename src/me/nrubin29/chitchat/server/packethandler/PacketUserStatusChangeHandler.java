@@ -1,9 +1,9 @@
-package me.nrubin29.chitchat.common.packet.handler;
+package me.nrubin29.chitchat.server.packethandler;
 
 import me.nrubin29.chitchat.common.AbstractUser;
 import me.nrubin29.chitchat.common.Chat;
 import me.nrubin29.chitchat.common.ChatManager;
-import me.nrubin29.chitchat.common.packet.packet.PacketUserStatusChange;
+import me.nrubin29.chitchat.common.packet.PacketUserStatusChange;
 import me.nrubin29.chitchat.server.User;
 
 public class PacketUserStatusChangeHandler extends PacketHandler<PacketUserStatusChange> {
